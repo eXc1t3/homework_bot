@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import logging
 from datetime import date
@@ -30,12 +29,12 @@ HOMEWORK_VERDICTS = {
 
 
 def check_tokens():
-    """Проверка наличия переменных среды"""
+    """Проверка наличия переменных среды."""
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
 def send_message(bot, message):
-    """Отправка сообщения в Telegram"""
+    """Отправка сообщения в Telegram."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug(f'Сообщение успешно отправлено.')
