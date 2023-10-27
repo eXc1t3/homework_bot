@@ -39,11 +39,11 @@ def send_message(bot, message):
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug(f'Сообщение успешно отправлено.')
     except Exception as error:
-        logging.error(f'Ошибка при отправке сообщения: {error}.')
+        logging.error(f'Ошибка при отправке сообщения: {"error"}')
 
 
 def get_api_answer(timestamp):
-    """Запрос к API Практикума"""
+    """Запрос к API Практикума."""
     params = {'from_data': timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
@@ -58,7 +58,7 @@ def get_api_answer(timestamp):
 
 
 def check_response(response):
-    """Проверка ответа от API"""
+    """Проверка ответа от API."""
     try:
         homeworks = response['homeworks']
         if type(homeworks) is not list:
@@ -69,7 +69,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Статус домашней работы"""
+    """Статус домашней работы."""
     homework_status = homework.get('status')
     homework_name = homework.get('homework_name')
     if homework_name is None:
