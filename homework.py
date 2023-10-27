@@ -46,12 +46,12 @@ def send_message(bot, message):
 
 def get_api_answer(timestamp):
     """Запрос к API Практикума."""
-    params = {'from_data': timestamp}
+    PARAMS = {'from_data': timestamp}
     try:
-        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+        response = requests.get(ENDPOINT, headers=HEADERS, params=PARAMS)
     except Exception as error:
         logging.error(f'Ошибка при запросе к API: {error}',
-                      f'С параметрами: {ENDPOINT}, {HEADERS}, {params}.')
+                      f'С параметрами: {ENDPOINT}, {HEADERS}, {PARAMS}.')
         return None
     if response.status_code != HTTPStatus.OK:
         raise Exception(f'Проблема с доступом к {ENDPOINT}.'
@@ -87,7 +87,9 @@ def parse_status(homework):
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        raise logging.critical('Отсутствуют обязательные переменные окружения!')
+        raise logging.critical(
+            'Отсутствуют обязательные переменные окружения!'
+        )
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = date.today()
     while True:
