@@ -37,9 +37,7 @@ def send_message(bot, message):
     """Отправка сообщения в Telegram."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logging.debug(
-            f'Сообщение успешно отправлено.'
-        )
+        logging.debug('Сообщение успешно отправлено.')
     except Exception as error:
         logging.error(
             f'Ошибка при отправке сообщения: {error}'
@@ -66,9 +64,7 @@ def check_response(response):
     try:
         homeworks = response['homeworks']
         if type(homeworks) is not list:
-            raise TypeError(
-                f'Значение ключа "homeworks" не является словарем.'
-            )
+            raise TypeError('Значение ключа "homeworks" не является словарем.')
     except KeyError:
         raise KeyError('Ответ API не содержит ключа "homeworks".')
     return homeworks
@@ -91,10 +87,7 @@ def parse_status(homework):
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        raise logging.critical(
-            'Отсутствуют обязательные переменные окружения!'
-        )
-
+        raise logging.critical('Отсутствуют обязательные переменные окружения!')
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = date.today()
     while True:
