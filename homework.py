@@ -39,7 +39,9 @@ def send_message(bot, message):
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug(f'Сообщение успешно отправлено.')
     except Exception as error:
-        logging.error(f'Ошибка при отправке сообщения: {"error"}')
+        logging.error(
+            f'Ошибка при отправке сообщения: {error}'
+        )
 
 
 def get_api_answer(timestamp):
