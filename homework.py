@@ -2,6 +2,7 @@ import os
 import time
 import logging
 from datetime import date
+from xmlrpc.client import ResponseError
 
 import requests
 import telegram
@@ -46,16 +47,17 @@ def send_message(bot, message):
 
 def get_api_answer(timestamp):
     """Запрос к API Практикума."""
-    PARAMS = {'from_data': timestamp}
+    params = {'from_data': timestamp}
+    main_params = dict(url=ENDPOINT, headers=HEADERS, params=params)
     try:
-        response = requests.get(ENDPOINT, headers=HEADERS, params=PARAMS)
+        response = requests.get(**main_params)
     except Exception as error:
-        logging.error(f'Ошибка при запросе к API: {error}',
-                      f'С параметрами: {ENDPOINT}, {HEADERS}, {PARAMS}.')
-        return None
+        raise ResponseError(f'Ошибка при запросе к API: {error}',
+                            f'С параметрами: {ENDPOINT}, {HEADERS}, {params}')
     if response.status_code != HTTPStatus.OK:
-        raise Exception(f'Проблема с доступом к {ENDPOINT}.'
-                        f'Код ответа {response.status_code}.')
+        raise ResponseError(
+            f'Не удалось выполнить запрос: {response.status_code}'
+        )
     return response.json()
 
 
@@ -63,8 +65,8 @@ def check_response(response):
     """Проверка ответа от API."""
     try:
         homeworks = response['homeworks']
-        if type(homeworks) is not list:
-            raise TypeError('Значение ключа "homeworks" не является словарем.')
+        if not isinstance(homeworks, list):
+            raise TypeError('Значение ключа "homeworks" не является списком.')
     except KeyError:
         raise KeyError('Ответ API не содержит ключа "homeworks".')
     return homeworks
@@ -87,9 +89,7 @@ def parse_status(homework):
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        raise logging.critical(
-            'Отсутствуют обязательные переменные окружения!'
-        )
+        raise logging.critical(SystemExit)
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = date.today()
     while True:
