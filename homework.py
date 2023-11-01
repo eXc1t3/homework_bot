@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -46,6 +45,22 @@ def send_message(bot, message):
         )
 
 
+class CustomAPIError(Exception):
+    """Исключение, возникающее при ошибке запроса к API."""
+
+    def __init__(self, message, endpoint=None, headers=None, params=None):
+        self.message = message
+        self.endpoint = endpoint
+        self.headers = headers
+        self.params = params
+
+    def __str__(self):
+        params_str = f'С параметрами: ' \
+                     f'{self.endpoint}, {self.headers}, {self.params}' \
+            if self.endpoint and self.headers and self.params else ''
+        return f'Ошибка при запросе к API: {self.message}\n{params_str}'
+
+
 def get_api_answer(timestamp):
     """Запрос к API Практикума."""
     params = {'from_data': timestamp}
@@ -53,12 +68,13 @@ def get_api_answer(timestamp):
     try:
         response = requests.get(**main_params)
     except Exception as error:
-        raise ResponseError(f'Ошибка при запросе к API: {error}',
-                            f'С параметрами: {ENDPOINT}, {HEADERS}, {params}')
-    if response.status_code != HTTPStatus.OK:
-        raise ResponseError(
-            f'Не удалось выполнить запрос: {response.status_code}'
+        raise CustomAPIError(
+            str(error), endpoint=ENDPOINT, headers=HEADERS, params=params
         )
+    if response.status_code != HTTPStatus.OK:
+        raise CustomAPIError(f'Не удалось выполнить запрос. '
+                             f'Код ошибки: {response.status_code}',
+                             endpoint=ENDPOINT, headers=HEADERS, params=params)
     return response.json()
 
 
