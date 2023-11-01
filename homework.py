@@ -49,12 +49,25 @@ class CustomAPIError(Exception):
     """Исключение, возникающее при ошибке запроса к API."""
 
     def __init__(self, message, endpoint=None, headers=None, params=None):
+        """
+        Инициализация объекта исключения.
+
+        :message: Сообщение об ошибке.
+        :endpoint: Конечная точка (endpoint) запроса к API.
+        :headers: Заголовки запроса к API.
+        :params: Параметры запроса к API.
+        """
         self.message = message
         self.endpoint = endpoint
         self.headers = headers
         self.params = params
 
     def __str__(self):
+        """
+        Возвращает строковое представление исключения.
+
+        :return: Строковое представление исключения.
+        """
         params_str = f'С параметрами: ' \
                      f'{self.endpoint}, {self.headers}, {self.params}' \
             if self.endpoint and self.headers and self.params else ''
