@@ -2,7 +2,6 @@ import os
 import time
 import logging
 from datetime import date
-from xmlrpc.client import ResponseError
 
 import requests
 import telegram
