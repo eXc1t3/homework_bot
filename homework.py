@@ -52,13 +52,12 @@ def get_api_answer(timestamp):
     try:
         response = requests.get(**main_params)
     except Exception as error:
-        raise APIRequestError(
-            str(error), endpoint=ENDPOINT, headers=HEADERS, params=params
-        )
+        raise APIRequestError(str(error))
     if response.status_code != HTTPStatus.OK:
-        raise APIStatusCodeError(f'Не удалось выполнить запрос. '
-                             f'Код ошибки: {response.status_code}',
-                             endpoint=ENDPOINT, headers=HEADERS, params=params)
+        raise APIStatusCodeError(
+            f'Не удалось выполнить запрос. '
+            f'Код ошибки: {response.status_code}'
+        )
     return response.json()
 
 
