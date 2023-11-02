@@ -8,6 +8,7 @@ import telegram
 from http import HTTPStatus
 
 from dotenv import load_dotenv
+from exceptions import APIRequestError, APIStatusCodeError
 
 load_dotenv()
 
@@ -44,35 +45,6 @@ def send_message(bot, message):
         )
 
 
-class CustomAPIError(Exception):
-    """Исключение, возникающее при ошибке запроса к API."""
-
-    def __init__(self, message, endpoint=None, headers=None, params=None):
-        """
-        Инициализация объекта исключения.
-
-        :message: Сообщение об ошибке.
-        :endpoint: Конечная точка (endpoint) запроса к API.
-        :headers: Заголовки запроса к API.
-        :params: Параметры запроса к API.
-        """
-        self.message = message
-        self.endpoint = endpoint
-        self.headers = headers
-        self.params = params
-
-    def __str__(self):
-        """
-        Возвращает строковое представление исключения.
-
-        :return: Строковое представление исключения.
-        """
-        params_str = f'С параметрами: ' \
-                     f'{self.endpoint}, {self.headers}, {self.params}' \
-            if self.endpoint and self.headers and self.params else ''
-        return f'Ошибка при запросе к API: {self.message}\n{params_str}'
-
-
 def get_api_answer(timestamp):
     """Запрос к API Практикума."""
     params = {'from_data': timestamp}
@@ -80,11 +52,11 @@ def get_api_answer(timestamp):
     try:
         response = requests.get(**main_params)
     except Exception as error:
-        raise CustomAPIError(
+        raise APIRequestError(
             str(error), endpoint=ENDPOINT, headers=HEADERS, params=params
         )
     if response.status_code != HTTPStatus.OK:
-        raise CustomAPIError(f'Не удалось выполнить запрос. '
+        raise APIStatusCodeError(f'Не удалось выполнить запрос. '
                              f'Код ошибки: {response.status_code}',
                              endpoint=ENDPOINT, headers=HEADERS, params=params)
     return response.json()
